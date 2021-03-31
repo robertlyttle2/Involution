@@ -41,20 +41,21 @@ class User(UserMixin, db.Model):
     name = db.Column(db.String(250))
 
 
-class WatchList(db.Model):
-    __tablename__ = "watchlist"
+class List(db.Model):
+    __tablename__ = "list"
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     name = db.Column(db.String(250))
 
 
-class WatchListItem(db.Model):
-    __tablename__ = "watchlist_item"
+class ListItem(db.Model):
+    __tablename__ = "list_item"
     id = db.Column(db.Integer, primary_key=True)
-    watchlist_id = db.Column(db.Integer, db.ForeignKey("watchlist.id"))
-    movie_id = db.Column(db.Integer)
-    movie_title = (db.Column(db.String(250)))
-    movie_poster_path = (db.Column(db.String(250)))
+    list_id = db.Column(db.Integer, db.ForeignKey("list.id"))
+    content_id = db.Column(db.Integer)
+    content_title = db.Column(db.String(250))
+    content_poster_path = db.Column(db.String(250))
+    content_type = db.Column(db.String(10))
 
 
 db.create_all()
@@ -65,8 +66,6 @@ TMDB_TV_SHOW_SEARCH_URL = "https://api.themoviedb.org/3/search/tv"
 TMDB_INFO_URL = "https://api.themoviedb.org/3/movie"
 TMDB_IMAGE_URL = "https://image.tmdb.org/t/p/w500"
 TMDB_TV_URL = "https://api.themoviedb.org/3/tv"
-
-# REGISTER
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -102,24 +101,22 @@ def register():
 
         login_user(new_user)
 
-        movies_watchlist = WatchList(
+        watchlist = List(
             user_id=current_user.id,
-            name="Movies Watchlist"
+            name="Watchlist"
         )
 
-        tv_show_watchlist = WatchList(
+        favourites = List(
             user_id=current_user.id,
-            name="TV Show Watchlist"
+            name="Favourites"
         )
 
-        db.session.add(movies_watchlist)
-        db.session.add(tv_show_watchlist)
+        db.session.add(watchlist)
+        db.session.add(favourites)
         db.session.commit()
 
         return redirect(url_for('search'))
     return render_template("sign-up.html", form=register_form, current_user=current_user)
-
-# LOGIN
 
 
 @ app.route("/login", methods=["GET", "POST"])
@@ -144,72 +141,131 @@ def login():
             return redirect(url_for('search'))
     return render_template("login.html", form=login_form, current_user=current_user)
 
-# LOGOUT
-
 
 @ app.route("/logout")
 def logout():
     logout_user()
     return redirect(url_for('search'))
 
-# WATCHLIST
-
 
 @ app.route("/watchlist")
 def watchlist():
-    user_watchlist = WatchList.query.filter_by(user_id=current_user.id).first()
-    watchlist_items = WatchListItem.query.filter_by(
-        watchlist_id=user_watchlist.id) and WatchListItem.query.order_by(WatchListItem.id.desc()).all()
+    user_watchlist = List.query.filter_by(user_id=current_user.id).first(
+    ) and List.query.filter_by(name="Watchlist").first()
+    watchlist_items = ListItem.query.filter_by(list_id=user_watchlist.id)
+    for item in watchlist_items:
+        print(f"Watchlist URL: {item}")
     return render_template("watchlist.html", current_user=current_user, watchlist=user_watchlist, watchlist_items=watchlist_items)
-
-# ADD TO WATCHLIST
 
 
 @ app.route("/add-to-watchlist")
 def add_to_watchlist():
 
-    user_watchlist = WatchList.query.filter_by(user_id=current_user.id).first()
+    # GETS CURRENT USER'S WATCHLIST
+    user_watchlist = List.query.filter_by(user_id=current_user.id).first(
+    ) and List.query.filter_by(name="Watchlist").first()
 
-    # CHECK TO SEE IF MOVIE IS ALREADY IN WATCHLIST
-    if WatchListItem.query.filter_by(watchlist_id=current_user.id).first() and WatchListItem.query.filter_by(movie_id=request.args.get("id")).first():
+    # CHECK IF ITEM ALREADY EXISTS IN WATCHLIST
+    content_id = request.args.get("id")
+    content_type = request.args.get("content_type")
+
+    if ListItem.query.filter_by(list_id=current_user.id).first() and ListItem.query.filter_by(
+            content_id=content_id).first() and ListItem.query.filter_by(content_type=content_type).first():
         flash("Item already exists in watchlist.")
         return redirect(url_for('watchlist'))
 
-    new_watchlist_item = WatchListItem(
-        watchlist_id=user_watchlist.id,
-        movie_id=request.args.get("id"),
-        movie_title=request.args.get("title"),
-        movie_poster_path=request.args.get("poster_path")
+    # CREATE NEW WATCHLIST ITEM
+    new_watchlist_item = ListItem(
+        list_id=user_watchlist.id,
+        content_id=request.args.get("id"),
+        content_title=request.args.get("title"),
+        content_poster_path=request.args.get("poster_path"),
+        content_type=request.args.get("content_type")
     )
 
     db.session.add(new_watchlist_item)
     db.session.commit()
 
-    watchlist_items = WatchListItem.query.filter_by(
-        watchlist_id=user_watchlist.id) and WatchListItem.query.order_by(WatchListItem.id.desc()).all()
+    watchlist_items = ListItem.query.filter_by(list_id=user_watchlist.id).all()
+
     return render_template("watchlist.html", current_user=current_user, watchlist=user_watchlist, watchlist_items=watchlist_items)
 
 
-# REMOVE FROM WATCHLIST
 @ app.route("/remove-from-watchlist")
 def remove_from_watchlist():
 
-    movie_id = request.args.get("id")
-    movie_to_delete = WatchListItem.query.filter_by(movie_id=movie_id).first()
+    content_id = request.args.get("id")
+    content_to_delete = ListItem.query.filter_by(content_id=content_id).first()
 
-    db.session.delete(movie_to_delete)
+    db.session.delete(content_to_delete)
     db.session.commit()
 
     return redirect(url_for('watchlist'))
 
 
-# EDIT PROFILE
+@app.route("/favourites")
+def favourites():
+
+    user_favourites = List.query.filter_by(user_id=current_user.id).first(
+    ) and List.query.filter_by(name="Favourites").first()
+
+    favourites_items = ListItem.query.filter_by(
+        list_id=user_favourites.id).all()
+
+    return render_template("favourites.html", current_user=current_user, favourites=user_favourites, favourites_items=favourites_items)
+
+
+@app.route("/add-to-favourites")
+def add_to_favourites():
+
+    # GETS CURRENT USER'S FAVOURITE LIST
+    user_favourites = List.query.filter_by(user_id=current_user.id).first(
+    ) and List.query.filter_by(name="Favourites").first()
+    print(user_favourites.id)
+
+    # CHECK IF ITEM ALREADY EXISTS IN FAVOURITES
+    content_id = request.args.get("id")
+    content_type = request.args.get("content_type")
+
+    if ListItem.query.filter_by(list_id=current_user.id).first() and ListItem.query.filter_by(
+            content_id=content_id).first() and ListItem.query.filter_by(content_type=content_type).first():
+        flash("Item already exists in favourites.")
+        return redirect(url_for('favourites'))
+
+    # CREATE NEW FAVOURITES ITEM
+    new_favourites_item = ListItem(
+        list_id=user_favourites.id,
+        content_id=request.args.get("id"),
+        content_title=request.args.get("title"),
+        content_poster_path=request.args.get("poster_path"),
+        content_type=request.args.get("content_type")
+    )
+
+    db.session.add(new_favourites_item)
+    db.session.commit()
+
+    favourites_items = ListItem.query.filter_by(
+        list_id=user_favourites.id).all()
+
+    return render_template("favourites.html", current_user=current_user, favourites=user_favourites, favourites_items=favourites_items)
+
+
+@app.route("/remove-from-favourites")
+def remove_from_favourites():
+    content_id = request.args.get("id")
+    content_to_delete = ListItem.query.filter_by(content_id=content_id).first()
+
+    db.session.delete(content_to_delete)
+    db.session.commit()
+
+    return redirect(url_for('favourites'))
+
+
 @ app.route("/edit-profile")
 def edit_profile():
     return render_template("edit-profile.html", current_user=current_user)
 
 
-# CHANGE PASSWORD
 @ app.route("/change-password", methods=["GET", "POST"])
 def change_password():
 
@@ -236,7 +292,6 @@ def change_password():
     return render_template("change-password.html", current_user=current_user, form=change_pw_form)
 
 
-# SEARCH
 @app.route("/search", methods=["GET", "POST"])
 def search():
     search_form = SearchForm()
@@ -279,7 +334,6 @@ def search_movie():
     return render_template("index.html", form=search_form)
 
 
-# MOVIES
 @app.route("/movie/", methods=["GET", "POST"])
 def movie():
     page_number = request.args.get("page_number")
@@ -323,6 +377,7 @@ def find_movie():
         movie = Movie(
             id=data["id"],
             title=data["title"],
+            content_type='movie',
             director=director,
             cast=", ".join(cast),
             genre=", ".join(genres),
@@ -335,8 +390,6 @@ def find_movie():
         )
         return render_template("content-info.html", movie=movie, similar_movies=similar_movies_data, img_url=TMDB_IMAGE_URL, is_movie=True)
 
-
-# TV SHOWS
 
 @app.route("/find-tv-shows")
 def find_tv_show():
@@ -368,6 +421,7 @@ def find_tv_show():
         tv_show = TVShow(
             id=data["id"],
             title=data["name"],
+            content_type='tv',
             creator=creator,
             cast=", ".join(cast),
             genre=", ".join(genres),

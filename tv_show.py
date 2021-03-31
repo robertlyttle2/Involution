@@ -1,8 +1,9 @@
 class TVShow():
-    def __init__(self, id, title, creator, cast, genre, overview, first_air_date,
+    def __init__(self, id, title, content_type, creator, cast, genre, overview, first_air_date,
                  episode_run_time, number_of_seasons, tagline, user_score, poster_url):
         self.id = id
         self.title = title
+        self.content_type = 'tv'
         self.cast = cast
         self.creator = creator
         self.genre = genre

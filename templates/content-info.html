@@ -21,14 +21,14 @@
           <a
             type="button"
             title="Add to favourites"
-            href="#"
+            href="{{url_for('add_to_favourites', id=movie.id, title=movie.title, poster_path=movie.poster_url, content_type=movie.content_type )}}"
             class="btn btn-warning"
             ><i class="fas fa-heart"></i
           ></a>
           <a
             type="button"
             title="Add to your watchlist"
-            href="{{url_for('add_to_watchlist', id=movie.id, title=movie.title, poster_path=movie.poster_url )}}"
+            href="{{url_for('add_to_watchlist', id=movie.id, title=movie.title, poster_path=movie.poster_url, content_type=movie.content_type )}}"
             class="btn btn-warning"
             ><i class="fas fa-bookmark"></i
           ></a>
@@ -105,14 +105,14 @@
           <a
             type="button"
             title="Add to favourites"
-            href="#"
+            href="{{url_for('add_to_favourites', id=tv_show.id, title=tv_show.title, poster_path=tv_show.poster_url, content_type=tv_show.content_type )}}"
             class="btn btn-warning"
             ><i class="fas fa-heart"></i
           ></a>
           <a
             type="button"
             title="Add to your watchlist"
-            href="{{url_for('add_to_watchlist', id=tv_show.id, title=tv_show.title, poster_path=tv_show.poster_url )}}"
+            href="{{url_for('add_to_watchlist', id=tv_show.id, title=tv_show.title, poster_path=tv_show.poster_url, content_type=tv_show.content_type )}}"
             class="btn btn-warning"
             ><i class="fas fa-bookmark"></i
           ></a>
