@@ -341,7 +341,6 @@ def find_movie():
 @app.route("/find-tv-shows")
 def find_tv_show():
     tv_show_id = request.args.get("id")
-    print(tv_show_id)
     if tv_show_id:
         tv_show_url = f"{TMDB_TV_URL}/{tv_show_id}"
         response = requests.get(url=tv_show_url, params={"api_key": API_KEY})
@@ -374,6 +373,8 @@ def find_tv_show():
             genre=", ".join(genres),
             overview=data["overview"],
             first_air_date=data["first_air_date"],
+            episode_run_time=data["episode_run_time"][0],
+            number_of_seasons=data["number_of_seasons"],
             tagline=data["tagline"],
             user_score=user_score,
             poster_url=f"{TMDB_IMAGE_URL}/{data['poster_path']}"
