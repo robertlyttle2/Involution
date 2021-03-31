@@ -1,0 +1,22 @@
+{% include 'header.html' %}
+
+<section id="edit-profile">
+    <div class="container">
+        <h1 class="heading">Edit Profile</h1>
+        <p class="lead">Name</p>
+        <p>{{current_user.name}}</p>
+        <p class="lead">Email</p>
+        <p>{{current_user.email}}</p>
+        
+        <a class="btn btn-warning" href="{{url_for('change_password')}}">Change Password</a>
+        {% with messages = get_flashed_messages() %} {% if messages %} {% for
+            message in messages %}
+            <p class="flash">{{ message }}</p>
+            {% endfor %} {% endif %} {% endwith %}
+       
+        
+    </div>
+</section>
+
+
+{% include 'footer.html' %}

@@ -1,0 +1,220 @@
+{% include 'header.html' %}
+
+<!-- MOVIES -->
+
+{% if is_movie: %}
+<div class="container-fluid title-container">
+  {% if movie_type == "top_rated": %}
+  <h1 class="top-heading">{{movie_type.replace("_", " ").upper()}} MOVIES</h1>
+  {% else: %}
+  <h1 class="top-heading">{{movie_type.upper()}} MOVIES</h1>
+  {% endif %}
+</div>
+
+<section id="grid-poster-layout">
+  <div class="row">
+    {% for movie in movies: %}
+    <div class="col">
+      <a href="{{ url_for('find_movie', id=movie.id) }}">
+        <div class="card">
+          <img
+            class="card-img-top"
+            src="https://image.tmdb.org/t/p/w500/{{movie.poster_path}}"
+            alt="movie-poster"
+          />
+          <div class="card-body">
+            <p class="grid-movie-title">{{movie.title}}</p>
+          </div>
+        </div>
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+
+  <nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+      <li class="page-item">
+        <a
+          class="page-link"
+          href="{{url_for('movie', page_number=1, movie_type=movie_type)}}"
+          >1</a
+        >
+      </li>
+      <li class="page-item">
+        <a
+          class="page-link"
+          href="{{url_for('movie', page_number=2, movie_type=movie_type)}}"
+          >2</a
+        >
+      </li>
+      <li class="page-item">
+        <a
+          class="page-link"
+          href="{{url_for('movie', page_number=3, movie_type=movie_type)}}"
+          >3</a
+        >
+      </li>
+      <li class="page-item">
+        <a
+          class="page-link"
+          href="{{url_for('movie', page_number=4, movie_type=movie_type)}}"
+          >4</a
+        >
+      </li>
+      <li class="page-item">
+        <a
+          class="page-link"
+          href="{{url_for('movie', page_number=5, movie_type=movie_type)}}"
+          >5</a
+        >
+      </li>
+      <li class="page-item">
+        <a
+          class="page-link"
+          href="{{url_for('movie', page_number=6, movie_type=movie_type)}}"
+          >6</a
+        >
+      </li>
+      <li class="page-item">
+        <a
+          class="page-link"
+          href="{{url_for('movie', page_number=7, movie_type=movie_type)}}"
+          >7</a
+        >
+      </li>
+      <li class="page-item">
+        <a
+          class="page-link"
+          href="{{url_for('movie', page_number=8, movie_type=movie_type)}}"
+          >8</a
+        >
+      </li>
+      <li class="page-item">
+        <a
+          class="page-link"
+          href="{{url_for('movie', page_number=9, movie_type=movie_type)}}"
+          >9</a
+        >
+      </li>
+      <li class="page-item">
+        <a
+          class="page-link"
+          href="{{url_for('movie', page_number=10, movie_type=movie_type)}}"
+          >10</a
+        >
+      </li>
+    </ul>
+  </nav>
+</section>
+
+<!-- TV SHOWS -->
+
+{% elif is_tv_show: %}
+<div class="container-fluid title-container">
+  {% if tv_show_type == "top_rated" or tv_show_type == "airing_today" or
+  tv_show_type == "on_the_air": %}
+  <h1 class="top-heading">
+    {{tv_show_type.replace("_", " ").upper()}} TV SHOWS
+  </h1>
+  {% else: %}
+  <h1 class="top-heading">{{tv_show_type.upper()}} TV SHOWS</h1>
+  {% endif %}
+</div>
+
+<section id="grid-poster-layout">
+  <div class="row">
+    {% for show in tv_shows: %}
+    <div class="col">
+      <a href="{{ url_for('find_tv_show', id=show.id) }}">
+        <div class="card">
+          <img
+            class="card-img-top"
+            src="https://image.tmdb.org/t/p/w500/{{show.poster_path}}"
+            onerror="this.oneerror=null; this.src='./static/images/no-image.jpg'"
+            alt=""
+          />
+          <div class="card-body">
+            <p class="grid-movie-title">{{show.name}}</p>
+          </div>
+        </div>
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+
+  <nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+      <li class="page-item">
+        <a
+          class="page-link"
+          href="{{url_for('tv_show', page_number=1, tv_show_type=tv_show_type)}}"
+          >1</a
+        >
+      </li>
+      <li class="page-item">
+        <a
+          class="page-link"
+          href="{{url_for('tv_show', page_number=2, tv_show_type=tv_show_type)}}"
+          >2</a
+        >
+      </li>
+      <li class="page-item">
+        <a
+          class="page-link"
+          href="{{url_for('tv_show', page_number=3, tv_show_type=tv_show_type)}}"
+          >3</a
+        >
+      </li>
+      <li class="page-item">
+        <a
+          class="page-link"
+          href="{{url_for('tv_show', page_number=4, tv_show_type=tv_show_type)}}"
+          >4</a
+        >
+      </li>
+      <li class="page-item">
+        <a
+          class="page-link"
+          href="{{url_for('tv_show', page_number=5, tv_show_type=tv_show_type)}}"
+          >5</a
+        >
+      </li>
+      <li class="page-item">
+        <a
+          class="page-link"
+          href="{{url_for('tv_show', page_number=6, tv_show_type=tv_show_type)}}"
+          >6</a
+        >
+      </li>
+      <li class="page-item">
+        <a
+          class="page-link"
+          href="{{url_for('tv_show', page_number=7, tv_show_type=tv_show_type)}}"
+          >7</a
+        >
+      </li>
+      <li class="page-item">
+        <a
+          class="page-link"
+          href="{{url_for('tv_show', page_number=8, tv_show_type=tv_show_type)}}"
+          >8</a
+        >
+      </li>
+      <li class="page-item">
+        <a
+          class="page-link"
+          href="{{url_for('tv_show', page_number=9, tv_show_type=tv_show_type)}}"
+          >9</a
+        >
+      </li>
+      <li class="page-item">
+        <a
+          class="page-link"
+          href="{{url_for('tv_show', page_number=10, tv_show_type=tv_show_type)}}"
+          >10</a
+        >
+      </li>
+    </ul>
+  </nav>
+</section>
+{% endif %} {% include 'footer.html' %}

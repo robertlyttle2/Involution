@@ -1,0 +1,36 @@
+{% include 'header.html' %}
+
+<div class="container-fluid title-container">
+  <h1 class="top-heading">SEARCH RESULTS</h1>
+</div>
+
+<section id="watchlist">
+  <div class="container">
+    {% for movie in movie_options: %}
+    <div class="container results-container">
+      <div class="container select-container">
+        <div class="content-poster">
+          <img
+            class="select-poster"
+            src="https://image.tmdb.org/t/p/w500/{{movie.poster_path}}"
+            onerror="this.oneerror=null; this.src='./static/images/no-image.jpg'"
+            alt=""
+          />
+        </div>
+        <div class="content">
+          <a
+            class="watchlist-movie-title"
+            href="{{ url_for('find_movie', id=movie.id) }}"
+            >{{movie.title}}</a
+          >
+          {% if movie.release_date: %}
+          <p>{{movie.release_date.split("-")[0]}}</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+{% include 'footer.html' %}

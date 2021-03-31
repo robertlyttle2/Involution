@@ -1,0 +1,168 @@
+{% include 'header.html' %} {% if is_movie: %}
+
+<div class="container-fluid title-container">
+  <h1 class="top-heading">INFO</h1>
+</div>
+
+<section id="movie-info">
+  <div class="container movie">
+    <div class="row">
+      <div class="col poster-col">
+        <img
+          class="movie-poster"
+          src="{{movie.poster_url}}"
+          alt="movie-poster"
+        />
+        {% if current_user.is_authenticated: %}
+        <div class="container buttons">
+          <!-- <div class="container rating-container">
+            <div class="rating">{{ movie.user_score }}</div>
+          </div> -->
+          <a
+            type="button"
+            title="Add to favourites"
+            href="#"
+            class="btn btn-warning"
+            ><i class="fas fa-heart"></i
+          ></a>
+          <a
+            type="button"
+            title="Add to your watchlist"
+            href="{{url_for('add_to_watchlist', id=movie.id, title=movie.title, poster_path=movie.poster_url )}}"
+            class="btn btn-warning"
+            ><i class="fas fa-bookmark"></i
+          ></a>
+        </div>
+        {% endif %}
+      </div>
+      <div class="col movie-data">
+        <h1 class="movie-title">
+          {{ movie.title.upper() }} ({{movie.release_date.split("-")[0]}})
+        </h1>
+
+        <p class="tagline">{{ movie.tagline.upper()}}</p>
+        <p><span class="sub-heading">Director:</span> {{movie.director}}</p>
+        <p><span class="sub-heading">Cast:</span> {{movie.cast}}</p>
+        <p><span class="sub-heading">Genre:</span> {{movie.genre}}</p>
+        <p><span class="sub-heading">Overview:</span> {{ movie.overview }}</p>
+        {% if movie.runtime > 0: %}
+        <p>
+          <span class="sub-heading">Runtime: </span> {{ movie.runtime }} mins
+        </p>
+        {% endif %} {% if movie.user_score > 0: %}
+        <p>
+          <span class="sub-heading">TMDB Rating: </span> {{ movie.user_score
+          }}/100
+        </p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="container-fluid title-container">
+  <h1 class="top-heading">RECOMMENDED MOVIES</h1>
+</div>
+
+<section id="grid-poster-layout">
+  <div class="row">
+    {% for similar_movie in similar_movies: %}
+    <div class="col">
+      <a href="{{ url_for('find_movie', id=similar_movie.id) }}">
+        <div class="card">
+          <img
+            class="card-img-top"
+            src="https://image.tmdb.org/t/p/w500/{{similar_movie.poster_path}}"
+            alt="no-image.jpg"
+          />
+          <div class="card-body">
+            <p class="grid-movie-title">{{similar_movie.title}}</p>
+          </div>
+        </div>
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+{% elif is_tv_show: %}
+
+<div class="container-fluid title-container">
+  <h1 class="top-heading">INFO</h1>
+</div>
+
+<section id="movie-info">
+  <div class="container movie">
+    <div class="row">
+      <div class="col poster-col">
+        <img
+          class="movie-poster"
+          src="{{tv_show.poster_url}}"
+          alt="movie-poster"
+        />
+        {% if current_user.is_authenticated: %}
+        <div class="container buttons">
+          <a
+            type="button"
+            title="Add to favourites"
+            href="#"
+            class="btn btn-warning"
+            ><i class="fas fa-heart"></i
+          ></a>
+          <a
+            type="button"
+            title="Add to your watchlist"
+            href="{{url_for('add_to_watchlist', id=tv_show.id, title=tv_show.title, poster_path=tv_show.poster_url )}}"
+            class="btn btn-warning"
+            ><i class="fas fa-bookmark"></i
+          ></a>
+        </div>
+        {% endif %}
+      </div>
+      <div class="col movie-data">
+        <h1 class="movie-title">
+          {{ tv_show.title.upper() }} ({{tv_show.first_air_date.split("-")[0]}})
+        </h1>
+        <p class="tagline">{{ tv_show.tagline.upper()}}</p>
+        <!-- <p><span class="sub-heading">Director:</span> {{tv_show.director}}</p> -->
+        <p><span class="sub-heading">Cast:</span> {{tv_show.cast}}</p>
+        {% if not tv_show.creator == None: %}
+        <p><span class="sub-heading">Creator:</span> {{tv_show.creator}}</p>
+        {% endif %}
+        <p><span class="sub-heading">Genre:</span> {{ tv_show.genre }}</p>
+        <p><span class="sub-heading">Overview:</span> {{ tv_show.overview }}</p>
+        <p>
+          <span class="sub-heading">TMDB Rating: </span> {{ tv_show.user_score
+          }}/100
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="container-fluid title-container">
+  <h1 class="top-heading">RECOMMENDED TV SHOWS</h1>
+</div>
+
+<section id="grid-poster-layout">
+  <div class="row">
+    {% for show in similar_tv_shows: %}
+    <div class="col">
+      <a href="{{ url_for('find_tv_show', id=show.id) }}">
+        <div class="card">
+          <img
+            class="card-img-top"
+            src="https://image.tmdb.org/t/p/w500/{{show.poster_path}}"
+            alt="no-image.jpg"
+          />
+          <div class="card-body">
+            <p class="grid-movie-title">{{show.name}}</p>
+          </div>
+        </div>
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+{% endif %} {% include 'footer.html' %}

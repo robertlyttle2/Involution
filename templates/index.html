@@ -1,0 +1,37 @@
+{% include 'header.html' %}
+
+<section id="hero" class="d-flex align-items-center justify-content-center">
+  <div class="container" data-aos="fade-up">
+
+    <div class="row justify-content-center" data-aos="fade-up" data-aos-delay="150">
+      <div class="col-xl-6 col-lg-8">
+        <h1>Search<span>.</span></h1>
+        <!-- <h2>For the movie buffs...</h2> -->
+      </div>
+      <div class="container search-container">
+        <div class="row justify-content-center">
+          <div class="col-md-6 col-lg-4">
+            <div class="login-wrap p-0">
+              <form method="POST" action="/" class="signin-form">
+                    {{ form.csrf_token }}
+                <div class="form-group">
+                    {{ form.title(class="form-control", required="required", type="text", placeholder="Search for a movie...") }}
+                </div>
+                <div class="form-group">
+                    {{ form.search(class="form-control btn btn-warning") }}
+                </div>
+    </div>
+
+
+           
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div>
+</div>
+
+{% include 'footer.html' %}

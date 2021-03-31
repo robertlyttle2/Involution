@@ -1,0 +1,27 @@
+{% include 'header.html' %}
+<div class="container-fluid title-container">
+  <h1 class="top-heading">SEARCH</h1>
+</div>
+
+<section id="form">
+    <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-md-6 col-lg-4">
+            <div class="login-wrap p-0">
+              <form method="POST" class="signin-form">
+                    {{ form.csrf_token }}
+                <div class="form-group">
+                    {{ form.title(class="form-control", required="required", type="text", placeholder="Search for a movie...") }}
+                </div>
+                <div class="form-group">
+                    {{ form.search(class="form-control btn") }}
+                </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+</section>
+
+
+{% include 'footer.html' %}
